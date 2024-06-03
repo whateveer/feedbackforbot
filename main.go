@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"log"
+	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,8 +18,17 @@ type Feedback struct {
 }
 
 func main() {
-	botToken := "7139151928:AAEHtCsFYKQn9EZVuHp2AJpHpn_GwB3hy00"
-	mongoURI := "mongodb+srv://sml:hwO05jIkWRN29oRi@ecoflow.ydwcdbg.mongodb.net/?retryWrites=true&w=majority&appName=Ecoflow"
+	// Load environment variables from .env file
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	botToken := os.Getenv("TELEGRAM_BOT_API")
+	mongoURI := os.Getenv("MONGO_URI")
+
+	if botToken == "" || mongoURI == "" {
+		log.Fatal("Environment variables TELEGRAM_BOT_API and MONGO_URI must be set")
+	}
 
 	// Initialize Telegram Bot
 	bot, err := tgbotapi.NewBotAPI(botToken)
